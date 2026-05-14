@@ -2,7 +2,7 @@
 import sys
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-from mcp_server import list_dir, read_file, write_file, grep, run_command, edit_file
+from mcp_server import list_dir, read_file, write_file, grep, run_command, edit_file, glob
 import asyncio
 
 
@@ -59,9 +59,31 @@ async def main():
     assert "编辑成功" in result, f"应成功，实际: {result}"
     print(f"  3d 上下文唯一化后成功: {result}")
 
+    # 4. glob — 文件模式搜索
+    print("\n" + "=" * 50)
+    print("  测试 glob")
+    print("=" * 50)
+
+    result = await glob("**/*.py", base)
+    assert "fibonacci.py" in result, f"应包含 fibonacci.py，实际: {result[:200]}"
+    assert "ai_dev_agent.py" in result, f"应包含 ai_dev_agent.py"
+    py_count = len(result.split("\n"))
+    print(f"  4a 找到 {py_count} 个 .py 文件")
+    print(f"     包含 fibonacci.py ✅, ai_dev_agent.py ✅")
+
+    result = await glob("**/*.md", base)
+    assert "session_2026-05-10.md" in result
+    assert "timsort_explanation.md" in result
+    md_count = len(result.split("\n"))
+    print(f"  4b 找到 {md_count} 个 .md 文件 ✅")
+
+    result = await glob("**/*.xyz", base)
+    assert "未找到" in result
+    print(f"  4c 搜索不存在的类型: {result}")
+
     print("\n" + "=" * 50)
     print("  MCP Server 全部工具测试通过 ✅")
-    print(f"  可用工具: list_dir, read_file, write_file, edit_file, grep, run_command")
+    print(f"  可用工具: list_dir, read_file, write_file, edit_file, grep, glob, run_command")
     print("=" * 50)
 
 

@@ -97,6 +97,29 @@ async def grep(pattern: str, directory: str, file_pattern: str = "*") -> str:
 
 
 @mcp.tool()
+async def glob(pattern: str, directory: str = ".") -> str:
+    """按文件模式搜索文件。例如 '**/*.py'、'*.tsx'、'src/**/*.js'"""
+    from pathlib import Path
+    try:
+        base = Path(directory)
+        matches = sorted(base.glob(pattern))
+        results = []
+        for p in matches:
+            if p.is_file():
+                parts = p.relative_to(base).parts
+                if any(part.startswith(".") for part in parts):
+                    continue
+                if any(part in ("node_modules", "__pycache__", "venv") for part in parts):
+                    continue
+                results.append(str(p))
+        if not results:
+            return f"未找到匹配 '{pattern}' 的文件"
+        return "\n".join(results[:50])
+    except Exception as e:
+        return str(e)
+
+
+@mcp.tool()
 async def run_command(command: str, cwd: str = ".") -> str:
     """执行 shell 命令并返回输出。用于跑测试、lint、git 等"""
     try:
