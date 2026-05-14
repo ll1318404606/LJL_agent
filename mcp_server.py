@@ -42,6 +42,34 @@ async def write_file(path: str, content: str) -> str:
 
 
 @mcp.tool()
+async def edit_file(path: str, old_string: str, new_string: str) -> str:
+    """精确替换文件中的指定字符串。找到 old_string 并替换为 new_string。
+    如果 old_string 在文件中出现多次，会报错并列出所有位置，请用更多上下文使其唯一。"""
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        count = content.count(old_string)
+        if count == 0:
+            return f"错误: 未找到指定文本。请用 read_file 确认文件当前内容。"
+
+        if count > 1:
+            lines = []
+            for i, line in enumerate(content.split("\n"), 1):
+                if old_string in line:
+                    lines.append(f"  L{i}: {line.strip()[:120]}")
+            return f"错误: 匹配到 {count} 处，请提供更多上下文使其唯一：\n" + "\n".join(lines[:10])
+
+        content = content.replace(old_string, new_string, 1)
+
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(content)
+        return "编辑成功"
+    except Exception as e:
+        return str(e)
+
+
+@mcp.tool()
 async def grep(pattern: str, directory: str, file_pattern: str = "*") -> str:
     """在目录中搜索匹配模式的行。file_pattern 如 '*.py' 过滤文件类型"""
     import fnmatch
