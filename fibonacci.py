@@ -1,3 +1,7 @@
+from functools import lru_cache
+
+
+@lru_cache(maxsize=128)
 def fibonacci(n):
     """
     计算斐波那契数列的第n项（从0开始）
