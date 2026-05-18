@@ -18,6 +18,7 @@ from openai import OpenAI
 from mcp.client.stdio import stdio_client, StdioServerParameters
 from mcp.client.session import ClientSession
 from memory_manager import MemoryManager
+from skill_manager import match_skills
 
 # ─── MCP 工具加载 ───
 
@@ -76,6 +77,7 @@ SYSTEM_PROMPT = """你是一个 AI 开发工程师。用户在维护一个软件
 - 改最少的文件完成需求
 - 编辑文件前先 read_file 确认当前内容
 - 出现错误时分析根因，不要盲目重试
+- 如果对话中出现了 <Skill> 标记的操作模板，严格按模板的步骤执行
 """
 
 
@@ -179,7 +181,7 @@ async def main():
             print("=" * 50)
 
             messages = [{"role": "system", "content": SYSTEM_PROMPT}]
-            memory = MemoryManager(keep_last=15)  # 开发任务较长，保留更多条
+            memory = MemoryManager(max_tokens=8000)  # 开发任务消息更重，token 阈值控制
 
             while True:
                 try:
@@ -193,6 +195,18 @@ async def main():
                 if user_input.lower() in ("exit", "quit", "q"):
                     print("再见！")
                     break
+
+                # 框架层 Skill 匹配（Claude Code 风格：模型感知前注入）
+                matched = match_skills(user_input)
+                if matched:
+                    for skill in matched:
+                        tag = f"<Skill name=\"{skill['name']}\">"
+                        skill_msg = {
+                            "role": "system",
+                            "content": f"{tag}\n{skill['content']}\n</Skill>",
+                        }
+                        messages.append(skill_msg)
+                        print(f"  [Skill 注入] {skill['name']}")
 
                 messages.append({"role": "user", "content": user_input})
 

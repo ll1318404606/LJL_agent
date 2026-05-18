@@ -136,14 +136,14 @@ class DocumentChunker:
         sections = self._split_by_headings(content)
 
         chunks = []
-        for section_title, section_text in sections:
+        for sec_idx, (section_title, section_text) in enumerate(sections):
             # 第二步：section 内按段落切
             paragraphs = self._split_paragraphs(section_text)
             # 第三步：合并小段落到目标大小
             merged = self._merge_paragraphs(paragraphs)
 
             for i, para_text in enumerate(merged):
-                chunk_id = f"{fname}__{section_title[:30]}_p{i}"
+                chunk_id = f"{fname}__s{sec_idx}_{section_title[:30]}_p{i}"
                 chunks.append({
                     "id": chunk_id,
                     "content": para_text,

@@ -1,11 +1,12 @@
 """
-MCP Server — 文件系统 + 代码搜索 + 命令执行
+MCP Server — 文件系统 + 代码搜索 + 命令执行 + Skill 管理
 独立进程，Agent 通过 MCP 协议调用它
 """
 import os
 import re
 import subprocess
 from mcp.server.fastmcp import FastMCP
+from skill_manager import list_skills as _list_skills, get_skill as _get_skill
 
 mcp = FastMCP("dev-tools-server")
 
@@ -138,6 +139,28 @@ async def run_command(command: str, cwd: str = ".") -> str:
         return "命令超时（60 秒）"
     except Exception as e:
         return str(e)
+
+
+@mcp.tool()
+async def list_skills() -> str:
+    """列出所有可用的 Skill 模板。返回 name、description、触发词。
+    当你遇到不熟悉的流程或用户要求做某类任务时，先调用它看看有没有现成的操作模板。"""
+    import json
+    skills = _list_skills()
+    if not skills:
+        return "(没有安装任何 Skill)"
+    return json.dumps(skills, ensure_ascii=False, indent=2)
+
+
+@mcp.tool()
+async def get_skill(name: str) -> str:
+    """获取指定 Skill 的完整操作步骤。name 参数可以是 skill 名称或文件名。
+    调用 list_skills 查看有哪些可用 Skill，然后传入它的 name 字段。"""
+    content = _get_skill(name)
+    if content is None:
+        available = [s["name"] for s in _list_skills()]
+        return f"未找到 '{name}'。可用的 skill: {', '.join(available)}"
+    return content
 
 
 if __name__ == "__main__":
