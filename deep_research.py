@@ -3,6 +3,8 @@ Deep Research Agent — 多步自主调研
 核心流程：拆解问题 → 多源搜索(Web+本地) → 追问深挖 → 综合报告
 """
 import sys, os, re, json
+from dotenv import load_dotenv
+load_dotenv()
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 import httpx
@@ -119,7 +121,7 @@ def search_all(query: str) -> dict:
 # ═══════════════════════════════════════════════════════
 
 client = OpenAI(
-    api_key="sk-248381b7b8a64de3879fccdfd2f0e213",
+    api_key=os.getenv("DEEPSEEK_API_KEY"),
     base_url="https://api.deepseek.com",
 )
 

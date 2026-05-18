@@ -6,6 +6,8 @@ import sys
 import json
 import asyncio
 import os
+from dotenv import load_dotenv
+load_dotenv()
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 from openai import OpenAI
@@ -112,7 +114,7 @@ async def run_agent(client, session, messages, tools, max_turns=15):
 
 async def main():
     client = OpenAI(
-        api_key="sk-248381b7b8a64de3879fccdfd2f0e213",
+        api_key=os.getenv("DEEPSEEK_API_KEY"),
         base_url="https://api.deepseek.com",
     )
 

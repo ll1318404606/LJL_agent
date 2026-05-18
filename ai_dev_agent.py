@@ -11,6 +11,10 @@ AI Dev Engineer Agent — 综合项目
 """
 import sys
 import json
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 import asyncio
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
@@ -153,10 +157,8 @@ async def run_agent(client: OpenAI, session: ClientSession, messages: list,
 # ─── 启动 ───
 
 async def main():
-    import os
-
     client = OpenAI(
-        api_key="sk-248381b7b8a64de3879fccdfd2f0e213",
+        api_key=os.getenv("DEEPSEEK_API_KEY"),
         base_url="https://api.deepseek.com",
     )
 

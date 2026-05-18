@@ -8,6 +8,10 @@ import sys, subprocess
 # 修复 Windows GBK 编码问题：强制使用 utf-8
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 from openai import OpenAI
 
 # ─── 第一步：定义工具 ───
@@ -98,7 +102,7 @@ def run_agent(client: OpenAI, messages: list, max_turns: int = 5):
 # ─── 第三步：对话循环（REPL） ───
 if __name__ == "__main__":
     client = OpenAI(
-        api_key="sk-248381b7b8a64de3879fccdfd2f0e213",
+        api_key=os.getenv("DEEPSEEK_API_KEY"),
         base_url="https://api.deepseek.com",
     )
 

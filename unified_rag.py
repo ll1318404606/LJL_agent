@@ -5,6 +5,8 @@
 - 检索：支持按 doc_type 过滤（code / document / all）
 """
 import sys, os
+from dotenv import load_dotenv
+load_dotenv()
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 import chromadb
@@ -107,7 +109,7 @@ def search(collection, model, query: str, top_k: int = 3,
 def ask(collection, model, question: str, filter_type: str = "all") -> str:
     """检索 + LLM 回答"""
     client = OpenAI(
-        api_key="sk-248381b7b8a64de3879fccdfd2f0e213",
+        api_key=os.getenv("DEEPSEEK_API_KEY"),
         base_url="https://api.deepseek.com",
     )
 

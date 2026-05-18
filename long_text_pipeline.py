@@ -3,6 +3,8 @@
 chunkers → unified_rag → memory_manager → (deep_research)
 """
 import sys, os
+from dotenv import load_dotenv
+load_dotenv()
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 import chromadb
@@ -31,7 +33,7 @@ class LongTextPipeline:
         self.model = None
         self.messages = []
         self.client = OpenAI(
-            api_key="sk-248381b7b8a64de3879fccdfd2f0e213",
+            api_key=os.getenv("DEEPSEEK_API_KEY"),
             base_url="https://api.deepseek.com",
         )
 

@@ -4,7 +4,11 @@
 - 分层再压缩（摘要的摘要）
 - 重要性分级截断（极端场景兜底）
 """
+import os
 import re
+from dotenv import load_dotenv
+load_dotenv()
+
 from openai import OpenAI
 
 
@@ -35,7 +39,7 @@ class MemoryManager:
                  base_url: str = "https://api.deepseek.com"):
         self.max_tokens = max_tokens or self.DEFAULT_MAX_TOKENS
         self.client = OpenAI(
-            api_key=api_key or "sk-248381b7b8a64de3879fccdfd2f0e213",
+            api_key=api_key or os.getenv("DEEPSEEK_API_KEY"),
             base_url=base_url,
         )
 

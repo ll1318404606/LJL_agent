@@ -2,7 +2,9 @@
 Multi-Agent 系统 — Manager 不做具体活，而是委派给子 Agent
 核心概念：委派（Delegate）、子 Agent 独立的 ReAct 循环、状态汇总
 """
-import sys, asyncio, json
+import sys, asyncio, json, os
+from dotenv import load_dotenv
+load_dotenv()
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 from openai import OpenAI
@@ -152,7 +154,7 @@ async def manager_loop(client: OpenAI, session: ClientSession, user_request: str
 # ─── 启动 ───
 async def main():
     client = OpenAI(
-        api_key="sk-248381b7b8a64de3879fccdfd2f0e213",
+        api_key=os.getenv("DEEPSEEK_API_KEY"),
         base_url="https://api.deepseek.com",
     )
 

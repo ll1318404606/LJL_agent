@@ -3,6 +3,8 @@ RAG Demo — 给 Agent 加上"知识库"能力
 核心流程：建索引（一次性）→ 查询时检索 → 拼进 Prompt → LLM 回答
 """
 import sys, os
+from dotenv import load_dotenv
+load_dotenv()
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 # ─── 第一步：建索引 ────────────────────────────────────
@@ -119,7 +121,7 @@ def ask(collection, model, question: str) -> str:
 回答："""
 
     client = OpenAI(
-        api_key="sk-248381b7b8a64de3879fccdfd2f0e213",
+        api_key=os.getenv("DEEPSEEK_API_KEY"),
         base_url="https://api.deepseek.com",
     )
     response = client.chat.completions.create(
